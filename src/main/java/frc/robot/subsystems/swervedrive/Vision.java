@@ -43,7 +43,8 @@ public class Vision {
                 limelightName, drive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
         // reject if spinning too fast (> 2 rot/sec)
-        if (Math.abs(drive.getRobotVelocity().omegaRadiansPerSecond) > (2 * Math.PI * 2)) {
+        if (Math.abs(drive.getRobotVelocity().omegaRadiansPerSecond)
+                > Math.toRadians(360)) { // 2 * Math.PI * 2
             reject("spinning to fast");
             return;
         }
