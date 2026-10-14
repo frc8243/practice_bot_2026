@@ -7,13 +7,13 @@
         "-jar",
         "C:\\Users\\Public\\wpilib\\2026\\vscode\\data\\extensions\\triplehelixprogramming.wpilog-analyzer-0.8.2\\server\\wpilog-mcp-all.jar",
         "-logdir",
-        "C:\\Users\\jmhsr\\riologs",
+        "\"C:\\Users\\jmhsr\\OneDrive\\Desktop\\logs\"",
         "-team",
-        "2363"
+        "8243"
       ],
       "env": {
-        "WPILOG_DIR": "C:\\Users\\jmhsr\\riologs",
-        "WPILOG_TEAM": "2363"
+        "WPILOG_DIR": "\"C:\\Users\\jmhsr\\OneDrive\\Desktop\\logs\"",
+        "WPILOG_TEAM": "8243"
       }
     }
   }

@@ -268,15 +268,17 @@ public class RobotContainer {
     }
 
     private static final Pose2d RIGHT_AUTO_START_POSE =
-            new Pose2d(4, 0.6, Rotation2d.fromDegrees(0));
+            new Pose2d(4.4, 0.7, Rotation2d.fromDegrees(0));
     private static final Pose2d MIDDLE_AUTO_START_POSE =
             new Pose2d(3.599, 4, Rotation2d.fromDegrees(0));
     private static final Pose2d OUTPOST_TRENCH_SHOOT_POSE =
             new Pose2d(3, 0.75, Rotation2d.fromDegrees(65));
     private static final Pose2d DEPOT_TRENCH_SHOOT_POSE =
-            new Pose2d(3, 7.3, Rotation2d.fromDegrees(-62));
+            new Pose2d(3, 7.3, Rotation2d.fromDegrees(-65));
     private static final Pose2d LEFT_AUTO_START_POSE =
-            new Pose2d(4, 7.5, Rotation2d.fromDegrees(0));
+            new Pose2d(4.4, 7.4, Rotation2d.fromDegrees(0));
+    private static final Pose2d LEFT_AUTO_BACK_POSE =
+            new Pose2d(4.4, 7.1, Rotation2d.fromDegrees(0));
     // private static final Pose2d LEFT_AUTO_START_POSE_SHOOT =
     //     new Pose2d(4, 7.4, Rotation2d.fromDegrees(48));
     private static final Pose2d DEPOT_SIDE_POSE = new Pose2d(1.73, 6, Rotation2d.fromDegrees(180));
@@ -286,12 +288,13 @@ public class RobotContainer {
     private static final Pose2d OUTPOST_ZONE_POSE2D =
             new Pose2d(0.816, 0.716, Rotation2d.fromDegrees(180));
     private static final Pose2d OUTPOST_TRENCH_FOWARD =
-            new Pose2d(7.4, 0.6, Rotation2d.fromDegrees(90));
+            new Pose2d(7.6, 0.6, Rotation2d.fromDegrees(90));
     private static final Pose2d DEPOT_TRENCH_FOWARD =
-            new Pose2d(7.5, 7.5, Rotation2d.fromDegrees(-90));
-    private static final Pose2d OUTPOST_TRENCH_RUN = new Pose2d(7.4, 4, Rotation2d.fromDegrees(90));
+            new Pose2d(7.6, 7.5, Rotation2d.fromDegrees(-90));
+    private static final Pose2d OUTPOST_TRENCH_RUN =
+            new Pose2d(7.6, 2.7, Rotation2d.fromDegrees(90));
     private static final Pose2d DEPOT_TRENCH_RUN =
-            new Pose2d(7.5, 4.5, Rotation2d.fromDegrees(-90));
+            new Pose2d(7.6, 5.5, Rotation2d.fromDegrees(-90));
     private static final Pose2d NEUTRAL_POSE = new Pose2d(8.2, 4, Rotation2d.fromDegrees(-90));
 
     private void setupAuton() {
@@ -339,11 +342,10 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> drivebase.resetOdometryDeferredFlip(RIGHT_AUTO_START_POSE)),
                         drivebase.driveToPoseDeferredWithFlip(OUTPOST_TRENCH_FOWARD, 0),
+                        arm.goToWristAngleCommand(WristAngle.DEPLOY),
                         drivebase
                                 .driveToPoseDeferredWithFlip(OUTPOST_TRENCH_RUN, 0)
-                                .deadlineWith(
-                                        arm.goToWristAngleCommand(WristAngle.DEPLOY),
-                                        intake.in(-1)),
+                                .deadlineWith(intake.in(-1)),
                         drivebase.driveToPoseDeferredWithFlip(OUTPOST_TRENCH_FOWARD, 0),
                         drivebase.driveToPoseDeferredWithFlip(RIGHT_AUTO_START_POSE, 0),
                         drivebase.driveToPoseDeferredWithFlip(OUTPOST_TRENCH_SHOOT_POSE, 0),
@@ -358,13 +360,12 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> drivebase.resetOdometryDeferredFlip(LEFT_AUTO_START_POSE)),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0),
+                        arm.goToWristAngleCommand(WristAngle.DEPLOY),
                         drivebase
-                                .driveToPoseDeferredWithFlip(DEPOT_TRENCH_RUN, 0)
-                                .deadlineWith(
-                                        arm.goToWristAngleCommand(WristAngle.DEPLOY),
-                                        intake.in(-1)),
+                                .driveSlowlyToPoseDeferredWithFlip(DEPOT_TRENCH_RUN, 0)
+                                .deadlineWith(intake.in(-1)),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0),
-                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 0),
+                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_BACK_POSE, 0),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_SHOOT_POSE, 0),
                         Commands.deadline(
                                         Commands.waitUntil(() -> shooter.atSpeed(3500, 100))
@@ -472,14 +473,14 @@ public class RobotContainer {
 
         // autoChooser.addOption("drivestraight", driveStraight);
 
-        autoChooser.addOption("Line", Line);
-        autoChooser.addOption("Depotjustshoot", DepotjustShoot);
+        // autoChooser.addOption("Line", Line);
+        // autoChooser.addOption("Depotjustshoot", DepotjustShoot);
         autoChooser.addOption("DepotNeutralShoot", DepotNeutralShoot);
-        autoChooser.addOption("Outpostjustshoot", OutpostJustShoot);
+        // autoChooser.addOption("Outpostjustshoot", OutpostJustShoot);
         autoChooser.addOption("middleshoot", middleshoot);
-        autoChooser.addOption("middleshootdepotsideways", middleshootdepotsideways);
-        autoChooser.addOption("middleShootOutpost", middleshootOUTPOST);
-        autoChooser.addOption("OutpostNeutralShoot", OutpostNeutralShoot);
+        // autoChooser.addOption("middleshootdepotsideways", middleshootdepotsideways);
+        // autoChooser.addOption("middleShootOutpost", middleshootOUTPOST);
+        // autoChooser.addOption("OutpostNeutralShoot", OutpostNeutralShoot);
         autoChooser.setDefaultOption("donothing", Commands.none());
         SmartDashboard.putData("Autos/Selector", autoChooser);
     }

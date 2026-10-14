@@ -342,6 +342,25 @@ public class SwerveSubsystem extends SubsystemBase {
                 Set.of(this));
     }
 
+    public Command driveSlowlyToPoseDeferredWithFlip(Pose2d pose, double goalEndVelocity) {
+
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints =
+                new PathConstraints(
+                        swerveDrive.getMaximumChassisVelocity() / 4,
+                        1.0,
+                        swerveDrive.getMaximumChassisAngularVelocity(),
+                        Units.degreesToRadians(720));
+
+        return new DeferredCommand(
+                () -> {
+                    boolean red = isRedAlliance();
+                    final Pose2d targetPose = red ? FlippingUtil.flipFieldPose(pose) : pose;
+                    return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity);
+                },
+                Set.of(this));
+    }
+
     public Command followWaypointsDeferred(Pose2d... poses) {
         return Commands.defer(
                 () -> {
