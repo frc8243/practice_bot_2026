@@ -367,10 +367,11 @@ public class RobotContainer {
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0),
                         drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_BACK_POSE, 0),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_SHOOT_POSE, 0),
+                        arm.goToWristAngleCommand(WristAngle.STOW),
                         Commands.deadline(
                                         Commands.waitUntil(() -> shooter.atSpeed(3500, 100))
                                                 .andThen(indexer.in(0.8).alongWith(hopper.in(0.4))),
-                                        shooter.spinToRPM(3500))
+                                        shooter.spinToRPM(3800))
                                 .withTimeout(8));
 
         Command middleshoot =
