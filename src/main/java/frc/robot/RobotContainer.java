@@ -274,7 +274,7 @@ public class RobotContainer {
     private static final Pose2d OUTPOST_TRENCH_SHOOT_POSE =
             new Pose2d(3, 0.75, Rotation2d.fromDegrees(65));
     private static final Pose2d DEPOT_TRENCH_SHOOT_POSE =
-            new Pose2d(3, 7.3, Rotation2d.fromDegrees(-65));
+            new Pose2d(3.21, 6.847, Rotation2d.fromDegrees(-65));
     private static final Pose2d LEFT_AUTO_START_POSE =
             new Pose2d(4.4, 7.4, Rotation2d.fromDegrees(0));
     private static final Pose2d LEFT_AUTO_BACK_POSE =
@@ -371,7 +371,7 @@ public class RobotContainer {
                         Commands.deadline(
                                         Commands.waitUntil(() -> shooter.atSpeed(3500, 100))
                                                 .andThen(indexer.in(0.8).alongWith(hopper.in(0.4))),
-                                        shooter.spinToRPM(3800))
+                                        shooter.spinToRPM(3500))
                                 .withTimeout(8));
 
         Command middleshoot =
@@ -379,6 +379,7 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> drivebase.resetOdometryDeferredFlip(MIDDLE_AUTO_START_POSE)),
                         drivebase.driveToPoseDeferredWithFlip(MIDDLE_SHOOT_POSE, 0),
+                        arm.goToWristAngleCommand(WristAngle.DEPLOY),
                         shooter.spinToRPM(2900)
                                 .until(() -> shooter.atSpeed(2900, 100))
                                 .andThen(
