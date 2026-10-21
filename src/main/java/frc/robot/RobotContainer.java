@@ -305,17 +305,20 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> drivebase.resetOdometryDeferredFlip(LEFT_AUTO_START_POSE)),
                         drivebase
-                                .driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0)
+                                .driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 1)
                                 .deadlineWith(
                                         arm.goToWristAngleCommand(WristAngle.DEPLOY),
                                         intake.in(-1)),
-                        drivebase.driveToPoseDeferredWithFlip(NEUTRAL_POSE, 0),
-                        drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0),
-                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 0),
+                        drivebase.driveSlowlyToPoseDeferredWithFlip(DEPOT_TRENCH_RUN, 0.2),
+                        drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0.8),
+                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1),
+                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_SHOOT_POSE, 0),
                         Commands.deadline(
                                 Commands.waitUntil(() -> shooter.atSpeed(3100, 100))
                                         .andThen(indexer.in(0.8).alongWith(hopper.in(0.4))),
-                                shooter.spinToRPM(3100)));
+                                shooter.spinToRPM(3100),
+                                 drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1)
+                                 ));
 
         Command DepotjustShoot =
                 Commands.sequence(
@@ -475,7 +478,7 @@ public class RobotContainer {
 
         // autoChooser.addOption("drivestraight", driveStraight);
 
-        // autoChooser.addOption("Line", Line);
+        autoChooser.addOption("Line", Line);
         // autoChooser.addOption("Depotjustshoot", DepotjustShoot);
         autoChooser.addOption("DepotNeutralShoot", DepotNeutralShoot);
         // autoChooser.addOption("Outpostjustshoot", OutpostJustShoot);
