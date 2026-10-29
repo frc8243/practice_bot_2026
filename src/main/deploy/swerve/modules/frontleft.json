@@ -1,0 +1,29 @@
+{
+  "$schema": "https://config.yagsl.com/schemas/module.json",
+  "drive": {
+    "type": "sparkflex_vortex",
+    "id": 11,
+    "canbus": ""
+  },
+  "angle": {
+    "type": "sparkmax_neo550",
+    "id": 12,
+    "canbus": ""
+  },
+  "inverted": {
+    "drive": false,
+    "angle": false
+  },
+  "encoder": {
+    "type": "attached",
+    "id": 0,
+    "channel": 0,
+    "canbus": null
+  },
+  "absoluteEncoderOffset": -90,
+  "absoluteEncoderInverted": true,
+  "location": {
+    "front": 12.875,
+    "left": 12.875
+  }
+}

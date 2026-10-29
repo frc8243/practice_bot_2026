@@ -83,15 +83,10 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param directory Directory of swerve drive config files.
      */
     public SwerveSubsystem(File directory) {
-        boolean blueAlliance = false;
+        // Use a neutral starting pose - zeroGyroWithAllliance() corrects the heading
+        // when the robot is enabled (both auto and teleop triggers are set below).
         Pose2d startingPose =
-                blueAlliance
-                        ? new Pose2d(
-                                new Translation2d(Meter.of(1), Meter.of(4)),
-                                Rotation2d.fromDegrees(0))
-                        : new Pose2d(
-                                new Translation2d(Meter.of(16), Meter.of(4)),
-                                Rotation2d.fromDegrees(180));
+                new Pose2d(new Translation2d(Meter.of(0), Meter.of(0)), Rotation2d.fromDegrees(0));
         // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
         // objects
         // being created.
