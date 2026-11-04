@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -45,6 +46,7 @@ public class RobotContainer {
     private SwerveInputStream driveAngularVelocityKeyboard;
     private SwerveInputStream driveDirectAngleKeyboard;
     private SendableChooser<Command> autoChooser;
+    private final PivotArm arm = new PivotArm();
 
     void createSwerveInputStreams() {
         /**
@@ -171,6 +173,8 @@ public class RobotContainer {
         }
 
         driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyroWithAlliance)));
+        new Trigger(() -> Math.abs(operatorXbox.getLeftY()) > 0.1)
+                .whileTrue(arm.manual(() -> -operatorXbox.getLeftY()));
         // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
 
         // driverXbox
@@ -235,6 +239,8 @@ public class RobotContainer {
     private static final Pose2d DEPOT_TRENCH_RUN =
             new Pose2d(7.6, 5.5, Rotation2d.fromDegrees(-90));
     private static final Pose2d NEUTRAL_POSE = new Pose2d(8.2, 4, Rotation2d.fromDegrees(-90));
+    private static final Pose2d DEPOT_THROUGH = new Pose2d(8.2, 0.5, Rotation2d.fromDegrees(-90));
+    private static final Pose2d DEPOT_BACK = new Pose2d(3.2, 0.5, Rotation2d.fromDegrees(0));
 
     private void setupAuton() {
         autoChooser = new SendableChooser<>();
@@ -248,16 +254,20 @@ public class RobotContainer {
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0.8),
                         drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_SHOOT_POSE, 0),
-                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1));
+                        drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1),
+                        drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0.8));
 
         Command Line =
                 Commands.sequence(
                         Commands.runOnce(() -> drivebase.resetOdometryDeferredFlip(DEPOT_STARTER)),
-                        drivebase.driveToPoseDeferredWithFlip(DEPOT_STRAIGHT, 0));
+                        drivebase.driveToPoseDeferredWithFlip(DEPOT_STRAIGHT, 1.5),
+                        drivebase.driveSlowlyToPoseDeferredWithFlip(DEPOT_THROUGH, 1.5),
+                        drivebase.driveToPoseDeferredWithFlip(DEPOT_BACK, 1.5));
 
         // autoChooser.addOption("drivestraight", driveStraight);
 
         autoChooser.addOption("Line", Line);
+        autoChooser.addOption("Linedepot", Linedepot);
 
         autoChooser.setDefaultOption("donothing", Commands.none());
         SmartDashboard.putData("Autos/Selector", autoChooser);
