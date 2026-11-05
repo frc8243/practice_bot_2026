@@ -187,7 +187,7 @@ public class RobotContainer {
                 .a()
                 .onTrue(Commands.runOnce(leds::setBlue, leds))
                 .onFalse(Commands.runOnce(leds::turnOff, leds));
-        
+
         // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
 
         // driverXbox

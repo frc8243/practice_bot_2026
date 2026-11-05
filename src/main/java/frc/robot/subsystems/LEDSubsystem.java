@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
-    private final CANdle candle = new CANdle(50); // CAN ID
+    private final CANdle candle = new CANdle(10); // CAN ID
     private boolean isGreen = false; // Elastic shows this
 
     public LEDSubsystem() {}
@@ -31,6 +31,11 @@ public class LEDSubsystem extends SubsystemBase {
 
     public void setBlue() {
         candle.setControl(new SolidColor(0, kAll).withColor(new RGBWColor(0, 0, 255, 0)));
+        isGreen = true;
+    }
+
+    public void setPurple() {
+        candle.setControl(new SolidColor(0, kAll).withColor(new RGBWColor(255, 0, 255, 0)));
         isGreen = true;
     }
 }
