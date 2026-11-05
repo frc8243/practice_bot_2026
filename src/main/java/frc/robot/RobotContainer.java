@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.PivotArm;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -47,6 +48,7 @@ public class RobotContainer {
     private SwerveInputStream driveDirectAngleKeyboard;
     private SendableChooser<Command> autoChooser;
     private final PivotArm arm = new PivotArm();
+    private final LEDSubsystem leds = new LEDSubsystem();
 
     void createSwerveInputStreams() {
         /**
@@ -175,6 +177,17 @@ public class RobotContainer {
         driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyroWithAlliance)));
         new Trigger(() -> Math.abs(operatorXbox.getLeftY()) > 0.1)
                 .whileTrue(arm.manual(() -> -operatorXbox.getLeftY()));
+
+        driverXbox
+                .x()
+                .onTrue(Commands.runOnce(leds::setGreen, leds))
+                .onFalse(Commands.runOnce(leds::turnOff, leds));
+
+        driverXbox
+                .a()
+                .onTrue(Commands.runOnce(leds::setBlue, leds))
+                .onFalse(Commands.runOnce(leds::turnOff, leds));
+        
         // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
 
         // driverXbox
