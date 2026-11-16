@@ -196,7 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
                     new PPHolonomicDriveController(
                             // PPHolonomicController is the built in path following controller for
                             // holonomic drive trains
-                            new PIDConstants(5.0, 0.0, 0.0),
+                            new PIDConstants(7.0, 0.0, 0.0),
                             // Translation PID constants
                             new PIDConstants(5.0, 0.0, 0.0)
                             // Rotation PID constants
@@ -323,7 +323,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // Create the constraints to use while pathfinding
         PathConstraints constraints =
                 new PathConstraints(
-                        swerveDrive.getMaximumChassisVelocity() / 2,
+                        swerveDrive.getMaximumChassisVelocity() / 4,
                         2.0,
                         swerveDrive.getMaximumChassisAngularVelocity(),
                         Units.degreesToRadians(720));

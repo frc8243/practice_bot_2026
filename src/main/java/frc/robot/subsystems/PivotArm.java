@@ -7,6 +7,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,8 +26,23 @@ public class PivotArm extends SubsystemBase {
     // fields
     private final SparkMax leader = new SparkMax(kLeaderId, MotorType.kBrushless);
     private final RelativeEncoder encoder = leader.getEncoder();
+    public static final double kStowDeg = -136;
+    public static final double kMidDeg = -84;
+    public static final double kDeploy = 5;
+    // Tuning numbers
+    private static final double kP = 0.05;
+    private static final double kG = -0.5;
+    private static final double kMaxVolts = 3.0;
+
+    private final PIDController pid = new PIDController(kP, 0, 0.0);
+    private double targetDeg = kStowDeg;
+
+    private double gravityVolts() {
+        return kG * Math.cos(encoder.getPosition());
+    }
 
     public PivotArm() {
+
         double factor = 2 * Math.PI / kGearRatio; // motor turns -> arm radians
         SparkMaxConfig leaderConfig = new SparkMaxConfig();
         leaderConfig.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
@@ -41,6 +58,20 @@ public class PivotArm extends SubsystemBase {
         encoder.setPosition(kStartAngle);
     }
 
+    private double angleDeg() {
+        return Units.radiansToDegrees(encoder.getPosition());
+    }
+
+    public Command goToAngle(double degrees) {
+        return run(
+                () -> {
+                    targetDeg = degrees;
+                    double push = pid.calculate(angleDeg(), degrees);
+                    push = MathUtil.clamp(push, -kMaxVolts, kMaxVolts);
+                    leader.setVoltage(push + gravityVolts());
+                });
+    }
+
     public Command manual(DoubleSupplier stick) {
         return run(() -> leader.set(stick.getAsDouble() * 0.25));
     }
@@ -48,5 +79,6 @@ public class PivotArm extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Arm/Angle deg", Units.radiansToDegrees(encoder.getPosition()));
+        SmartDashboard.putNumber("Arm/Target deg", targetDeg);
     }
 }

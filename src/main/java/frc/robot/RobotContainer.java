@@ -133,6 +133,9 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
+        operatorXbox.a().onTrue(arm.goToAngle(PivotArm.kStowDeg));
+        operatorXbox.b().onTrue(arm.goToAngle(PivotArm.kMidDeg));
+        operatorXbox.y().onTrue(arm.goToAngle(PivotArm.kDeploy));
 
         Command driveFieldOrientedAngularVelocity =
                 drivebase.driveFieldOriented(driveAngularVelocity);
@@ -184,10 +187,10 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(leds::turnOff, leds));
 
         driverXbox
-                .a()
+                .y()
                 .onTrue(Commands.runOnce(leds::setBlue, leds))
                 .onFalse(Commands.runOnce(leds::turnOff, leds));
-        
+
         // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
 
         // driverXbox
@@ -254,6 +257,9 @@ public class RobotContainer {
     private static final Pose2d NEUTRAL_POSE = new Pose2d(8.2, 4, Rotation2d.fromDegrees(-90));
     private static final Pose2d DEPOT_THROUGH = new Pose2d(8.2, 0.5, Rotation2d.fromDegrees(-90));
     private static final Pose2d DEPOT_BACK = new Pose2d(3.2, 0.5, Rotation2d.fromDegrees(0));
+    private static final Pose2d RIGHT_STARTING = new Pose2d(1.788, 1.05, Rotation2d.fromDegrees(0));
+    private static final Pose2d RIGHT_STRAIGHT = new Pose2d(6.3, 0.9, Rotation2d.fromDegrees(0));
+    private static final Pose2d RIGHT_BACK = new Pose2d(1.788, 1.05, Rotation2d.fromDegrees(180));
 
     private void setupAuton() {
         autoChooser = new SendableChooser<>();
@@ -270,16 +276,15 @@ public class RobotContainer {
                         drivebase.driveToPoseDeferredWithFlip(LEFT_AUTO_START_POSE, 1),
                         drivebase.driveToPoseDeferredWithFlip(DEPOT_TRENCH_FOWARD, 0.8));
 
-        Command Line =
+        Command rightStraight =
                 Commands.sequence(
-                        Commands.runOnce(() -> drivebase.resetOdometryDeferredFlip(DEPOT_STARTER)),
-                        drivebase.driveToPoseDeferredWithFlip(DEPOT_STRAIGHT, 1.5),
-                        drivebase.driveSlowlyToPoseDeferredWithFlip(DEPOT_THROUGH, 1.5),
-                        drivebase.driveToPoseDeferredWithFlip(DEPOT_BACK, 1.5));
+                        Commands.runOnce(() -> drivebase.resetOdometryDeferredFlip(RIGHT_STARTING)),
+                        drivebase.driveToPoseDeferredWithFlip(RIGHT_STRAIGHT, 0),
+                        drivebase.driveToPoseDeferredWithFlip(RIGHT_BACK, 0));
 
         // autoChooser.addOption("drivestraight", driveStraight);
 
-        autoChooser.addOption("Line", Line);
+        autoChooser.addOption("rightStraight2023", rightStraight);
         autoChooser.addOption("Linedepot", Linedepot);
 
         autoChooser.setDefaultOption("donothing", Commands.none());

@@ -9,12 +9,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDSubsystem extends SubsystemBase {
     private final CANdle candle = new CANdle(50); // CAN ID
     private boolean isGreen = false; // Elastic shows this
+    private boolean isBlue = false; // Elastic shows this
 
     public LEDSubsystem() {}
 
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("LED/GREEN", isGreen);
+        SmartDashboard.putBoolean("LED/BLUE", isBlue);
     }
 
     private static final int kAll = 127;
@@ -27,10 +29,11 @@ public class LEDSubsystem extends SubsystemBase {
     public void turnOff() {
         candle.setControl(new SolidColor(0, kAll).withColor(new RGBWColor(0, 0, 0, 0)));
         isGreen = false;
+        isBlue = false;
     }
 
     public void setBlue() {
         candle.setControl(new SolidColor(0, kAll).withColor(new RGBWColor(0, 0, 255, 0)));
-        isGreen = true;
+        isBlue = true;
     }
 }
