@@ -20,8 +20,8 @@ public class PivotArm extends SubsystemBase {
     private static final int kLeaderId = 8;
 
     private static final double kGearRatio = 12.0;
-    private static final double kMinAngle = Math.toRadians(-135);
-    private static final double kMaxAngle = Math.toRadians(0);
+    private static final double kMinAngle = Math.toRadians(-145);
+    private static final double kMaxAngle = Math.toRadians(10);
     private static final double kStartAngle = kMinAngle;
     // fields
     private final SparkMax leader = new SparkMax(kLeaderId, MotorType.kBrushless);
