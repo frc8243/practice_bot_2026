@@ -8,7 +8,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,21 +22,23 @@ public class PivotArm extends SubsystemBase {
     private static final int kLeaderId = 8;
 
     private static final double kGearRatio = 12.0;
-    private static final double kMinAngle = Math.toRadians(-145);
-    private static final double kMaxAngle = Math.toRadians(10);
+    private static final double kMinAngle = Math.toRadians(-135);
+    private static final double kMaxAngle = Math.toRadians(0);
     private static final double kStartAngle = kMinAngle;
-    // fields
+    // fields;
     private final SparkMax leader = new SparkMax(kLeaderId, MotorType.kBrushless);
     private final RelativeEncoder encoder = leader.getEncoder();
-    public static final double kStowDeg = -136;
+    public static final double kStowDeg = -130;
     public static final double kMidDeg = -84;
-    public static final double kDeploy = 5;
+    public static final double kDeploy = -5;
     // Tuning numbers
     private static final double kP = 0.05;
     private static final double kG = -0.5;
     private static final double kMaxVolts = 3.0;
 
-    private final PIDController pid = new PIDController(kP, 0, 0.0);
+    //  private final PIDController pid = new PIDController(kP, 0, 0.0);
+    private final ProfiledPIDController pid =
+            new ProfiledPIDController(kP, 0, 0.003, new TrapezoidProfile.Constraints(90, 180));
     private double targetDeg = kStowDeg;
 
     private double gravityVolts() {
@@ -63,13 +67,15 @@ public class PivotArm extends SubsystemBase {
     }
 
     public Command goToAngle(double degrees) {
-        return run(
-                () -> {
-                    targetDeg = degrees;
-                    double push = pid.calculate(angleDeg(), degrees);
-                    push = MathUtil.clamp(push, -kMaxVolts, kMaxVolts);
-                    leader.setVoltage(push + gravityVolts());
-                });
+        return runOnce(() -> pid.reset(angleDeg()))
+                .andThen(
+                        run(
+                                () -> {
+                                    targetDeg = degrees;
+                                    double push = pid.calculate(angleDeg(), degrees);
+                                    push = MathUtil.clamp(push, -kMaxVolts, kMaxVolts);
+                                    leader.setVoltage(push + gravityVolts());
+                                }));
     }
 
     public Command manual(DoubleSupplier stick) {
@@ -80,5 +86,10 @@ public class PivotArm extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Arm/Angle deg", Units.radiansToDegrees(encoder.getPosition()));
         SmartDashboard.putNumber("Arm/Target deg", targetDeg);
+        SmartDashboard.putNumber(
+                "Arm/Applied V", leader.getAppliedOutput() * leader.getBusVoltage());
+        SmartDashboard.putNumber("Arm/Bus V", leader.getBusVoltage());
+        SmartDashboard.putNumber("Arm/Current A", leader.getOutputCurrent());
+        SmartDashboard.putNumber("Arm/Motor temp C", leader.getMotorTemperature());
     }
 }
